@@ -8,6 +8,7 @@ import { ChevronDown, ChevronUp, MessageSquare } from "lucide-react";
 import { toast, Toaster } from "react-hot-toast";
 import { useAuth } from "../../Context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { Share2 } from "lucide-react";
 
 const SharePost = () => {
   const { postId } = useParams();
@@ -188,8 +189,11 @@ const SharePost = () => {
             </div>
             <div>
               <Link to={`/post/${post._id}`}>
-                <button className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">
-                  Share
+                <button
+                  className="bg-gray-100 hover:bg-gray-300 active:scale-95 transition-all duration-200 text-white p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300 shadow-md"
+                  title="Share Post"
+                >
+                  <Share2 className="w-5 h-5 text-black" />
                 </button>
               </Link>
             </div>

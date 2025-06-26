@@ -6,17 +6,12 @@ import {
   ThumbsUp,
   ThumbsDown,
   ChevronDown,
-   Heart,
-  HeartOff,
   ChevronUp,
   MessageSquare,
 } from "lucide-react";
 import LocationMap from "../../Map/LocationMap";
 import { Link } from "react-router-dom";
-import { Share2, Send, Share } from 'lucide-react';
-import { Loader2 } from "lucide-react";
-
-
+import { Share2 } from "lucide-react";
 
 const OtherPosts = () => {
   const [posts, setPosts] = useState([]);
@@ -25,8 +20,7 @@ const OtherPosts = () => {
   const [openComments, setOpenComments] = useState({});
   const { id, name, role } = useAuth();
   const hasUpvoted = (post) => post.upvotes?.includes(id);
-const hasDownvoted = (post) => post.downvotes?.includes(id);
-
+  const hasDownvoted = (post) => post.downvotes?.includes(id);
 
   const fetchAllPosts = async () => {
     try {
@@ -215,12 +209,12 @@ const hasDownvoted = (post) => post.downvotes?.includes(id);
                 </div>
                 <div>
                   <button
-  onClick={() => handleShare(post._id)}
-  className="bg-blue-500 hover:bg-blue-600 active:scale-95 transition-all duration-200 text-white p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300 shadow-md"
-  title="Share Post"
->
-  <Send className="w-5 h-5" />
-</button>
+                    onClick={() => handleShare(post._id)}
+                    className="bg-gray-100 hover:bg-gray-300 active:scale-95 transition-all duration-200 text-white p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300 shadow-md"
+                    title="Share Post"
+                  >
+                    <Share2 className="w-5 h-5 text-black" />
+                  </button>
                 </div>
               </div>
 
@@ -275,36 +269,35 @@ const hasDownvoted = (post) => post.downvotes?.includes(id);
               </div>
 
               <div className="flex flex-wrap items-center gap-6 mt-4 text-sm">
-               <button
-  onClick={() => vote(post._id, "upvote")}
-  className={`flex items-center gap-2 font-medium px-3 py-2 rounded-full transition-all duration-200 transform hover:scale-105 ${
-    hasUpvoted(post)
-      ? "bg-green-500 text-white shadow-lg"
-      : "bg-gray-100 text-green-500 hover:bg-green-50 border border-greem-200"
-  }`}
->
-  <ThumbsUp 
-    size={16} 
-    className={hasUpvoted(post) ? "fill-current" : ""} 
-  />
-  Upvote ({post.upvotes?.length || 0})
-</button>
+                <button
+                  onClick={() => vote(post._id, "upvote")}
+                  className={`flex items-center gap-2 font-medium px-3 py-2 rounded-full transition-all duration-200 transform hover:scale-105 ${
+                    hasUpvoted(post)
+                      ? "bg-green-500 text-white shadow-lg"
+                      : "bg-gray-100 text-green-500 hover:bg-green-50 border border-greem-200"
+                  }`}
+                >
+                  <ThumbsUp
+                    size={16}
+                    className={hasUpvoted(post) ? "fill-current" : ""}
+                  />
+                  Upvote ({post.upvotes?.length || 0})
+                </button>
 
-               <button
-  onClick={() => vote(post._id, "downvote")}
-  className={`flex items-center gap-2 font-medium px-3 py-2 rounded-full transition-all duration-200 transform hover:scale-105 ${
-    hasDownvoted(post)
-      ? "bg-red-600 text-white shadow-lg"
-      : "bg-gray-100 text-red-600 hover:bg-red-50 border border-red-300"
-  }`}
->
-  <ThumbsDown 
-    size={16} 
-    className={hasDownvoted(post) ? "fill-current" : ""} 
-  />
-  Downvote ({post.downvotes?.length || 0})
-</button>
-
+                <button
+                  onClick={() => vote(post._id, "downvote")}
+                  className={`flex items-center gap-2 font-medium px-3 py-2 rounded-full transition-all duration-200 transform hover:scale-105 ${
+                    hasDownvoted(post)
+                      ? "bg-red-600 text-white shadow-lg"
+                      : "bg-gray-100 text-red-600 hover:bg-red-50 border border-red-300"
+                  }`}
+                >
+                  <ThumbsDown
+                    size={16}
+                    className={hasDownvoted(post) ? "fill-current" : ""}
+                  />
+                  Downvote ({post.downvotes?.length || 0})
+                </button>
               </div>
 
               <div className="mt-6">
