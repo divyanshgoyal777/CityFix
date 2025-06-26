@@ -86,7 +86,7 @@ const Header = () => {
       ];
 
   return (
-    <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
+    <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-[9999]">
       <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
         <Link
           to="/"

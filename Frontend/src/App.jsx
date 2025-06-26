@@ -36,6 +36,7 @@ import CreatePost from "./components/Posts/CreatePost/CreatePost";
 import CommunityChat from "./components/dashboard/userDashboard/CommunityChat/CommunityChat";
 import SharePost from "./components/Posts/SharePost/SharePost";
 import ScrollToTop from "./components/ScrollToTop";
+import AIChat from "./components/AIChat/AIChat";
 
 // 🔐 Protected route for logged-in users
 const ProtectedRoute = ({ element, role }) => {
@@ -65,6 +66,7 @@ function App() {
     <AuthProvider>
       <Router>
         <ScrollToTop />
+        <AIChat />
         <Routes>
           {/* Public Pages */}
           <Route path="/" element={<Home />} />

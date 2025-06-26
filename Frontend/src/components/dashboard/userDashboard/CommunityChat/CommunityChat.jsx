@@ -2,6 +2,9 @@ import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useAuth } from "../../../Context/AuthContext";
 import { toast } from "react-hot-toast";
+import io from "socket.io-client";
+
+const socket = io(import.meta.env.VITE_CITYFIX_BACKEND_URL);
 
 const CommunityChat = () => {
   const [messages, setMessages] = useState([]);
@@ -26,6 +29,13 @@ const CommunityChat = () => {
 
   useEffect(() => {
     fetchMessages();
+    socket.on("receive_message", (newMessage) => {
+      setMessages((prev) => [...prev, newMessage]);
+    });
+
+    return () => {
+      socket.off("receive_message");
+    };
   }, []);
 
   useEffect(() => {
@@ -44,16 +54,13 @@ const CommunityChat = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      setMessages((prev) => [...prev, res.data.data]);
+      const newMsg = res.data.data;
+      socket.emit("send_message", newMsg);
       setMsg("");
     } catch (err) {
       toast.error("Failed to send message");
       console.error(err);
     }
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") handleSend();
   };
 
   return (
@@ -93,7 +100,7 @@ const CommunityChat = () => {
                 ) : (
                   <div className="text-sm font-bold">You</div>
                 )}
-                <div className="text-sm">{m.msg}</div>
+                <div className="text-sm whitespace-pre-wrap">{m.msg}</div>
                 <div className="text-xs text-gray-400 mt-1">
                   {new Date(m.createdAt).toLocaleString()}
                 </div>
@@ -104,14 +111,18 @@ const CommunityChat = () => {
         <div ref={chatEndRef} />
       </div>
 
-      <div className="flex items-center gap-2 mt-4 border-t border-gray-700 pt-3">
-        <input
-          type="text"
+      <div className="flex items-start gap-2 mt-4 border-t border-gray-700 pt-3">
+        <textarea
           value={msg}
           onChange={(e) => setMsg(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Type a message..."
-          className="flex-1 border p-2 rounded-lg outline-none"
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSend();
+            }
+          }}
+          placeholder="Type a message... (Shift+Enter for new line)"
+          className="flex-1 border p-2 rounded-lg outline-none resize-none h-10"
         />
         <button
           onClick={handleSend}
