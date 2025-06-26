@@ -3,6 +3,8 @@ import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
 import { useAuth } from "../../../Context/AuthContext";
 import { ThumbsDown, ThumbsUp } from "lucide-react";
+import LiveRouteToIssue from "../../../Map/LiveRoutetoIssue";
+
 
 const ViewProgress = () => {
   const [posts, setPosts] = useState([]);
@@ -244,7 +246,7 @@ const hasDownvoted = (post) => post.downvotes?.includes(id);
         <p className="text-gray-500">No posts found.</p>
       ) : (
         posts
-          .filter((post) => post.assignedGovernment === id)
+          .filter((post) => post.assignedGovernment === id && post.progressState !== "Finished")
           .map((post) => (
             <div
               key={post._id}
@@ -301,7 +303,7 @@ const hasDownvoted = (post) => post.downvotes?.includes(id);
                 </p>
               </div>
 
-             <div className="flex flex-wrap items-center gap-6 mt-4 text-sm">
+             <div className="flex flex-wrap items-center gap-6 mt-4 text-sm mb-4">
                <button
   onClick={() => vote(post._id, "upvote")}
   className={`flex items-center gap-2 font-medium px-3 py-2 rounded-full transition-all duration-200 transform hover:scale-105 ${
@@ -333,6 +335,13 @@ const hasDownvoted = (post) => post.downvotes?.includes(id);
 </button>
 
               </div>
+
+                 {post.location?.coordinates && (
+                            <LiveRouteToIssue
+                              issueLat={post.location.coordinates.lat}
+                              issueLng={post.location.coordinates.lng}
+                            />
+                          )}
 
               {post.progressState === "Work Near Completion" &&
                 uploadingPostId === post._id && (

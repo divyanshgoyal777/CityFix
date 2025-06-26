@@ -41,6 +41,7 @@ const hasDownvoted = (post) => post.downvotes?.includes(id);
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      console.log(res.data.posts);
       setPosts(res.data.posts);
     } catch (err) {
       console.error(err);
@@ -383,7 +384,7 @@ const hasDownvoted = (post) => post.downvotes?.includes(id);
       {filteredPosts.length === 0 ? (
         <p className="text-gray-500">No posts found matching your filters.</p>
       ) : (
-        filteredPosts.map((post) => (
+        filteredPosts.filter((post) => post.assignedGovernment === null).map((post) => (
           <div
             key={post._id}
             className="bg-white border border-gray-200 shadow-sm rounded-xl p-5 mb-8"
@@ -452,7 +453,7 @@ const hasDownvoted = (post) => post.downvotes?.includes(id);
               </p>
             </div>
 
-           <div className="flex flex-wrap items-center gap-6 mt-4 text-sm">
+           <div className="flex flex-wrap items-center gap-6 mt-4 text-sm mb-4">
                <button
   onClick={() => vote(post._id, "upvote")}
   className={`flex items-center gap-2 font-medium px-3 py-2 rounded-full transition-all duration-200 transform hover:scale-105 ${
