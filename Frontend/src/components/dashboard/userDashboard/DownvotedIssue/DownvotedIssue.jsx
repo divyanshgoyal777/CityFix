@@ -1,51 +1,53 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
-import { useAuth } from "../../Context/AuthContext";
+import { useAuth } from "../../../Context/AuthContext";
 import {
   ThumbsUp,
   ThumbsDown,
   ChevronDown,
-   Heart,
-  HeartOff,
   ChevronUp,
   MessageSquare,
 } from "lucide-react";
-import LocationMap from "../../Map/LocationMap";
+import LocationMap from "../../../Map/LocationMap";
 import { Link } from "react-router-dom";
 import { Share2, Send, Share } from 'lucide-react';
 import { Loader2 } from "lucide-react";
 
 
-
-const OtherPosts = () => {
-  const [posts, setPosts] = useState([]);
-  const [commentInputs, setCommentInputs] = useState({});
-  const [replyInputs, setReplyInputs] = useState({});
-  const [openComments, setOpenComments] = useState({});
-  const { id, name, role } = useAuth();
-  const hasUpvoted = (post) => post.upvotes?.includes(id);
+const DownvotedIssue = () => {
+  const [loading, setLoading] = useState(true);
+   const [posts, setPosts] = useState([]);
+    const [commentInputs, setCommentInputs] = useState({});
+    const [replyInputs, setReplyInputs] = useState({});
+    const [openComments, setOpenComments] = useState({});
+    const { id, name, role } = useAuth();
+    const hasUpvoted = (post) => post.upvotes?.includes(id);
 const hasDownvoted = (post) => post.downvotes?.includes(id);
 
 
-  const fetchAllPosts = async () => {
+  const fetchDownvotedPosts = async () => {
+    const token = localStorage.getItem("token");
     try {
-      const token = localStorage.getItem("token");
       const res = await axios.get(
-        `${import.meta.env.VITE_CITYFIX_BACKEND_URL}/api/user/allPosts`,
+        `${import.meta.env.VITE_CITYFIX_BACKEND_URL}/api/user/downvotedPosts`,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
-      console.log(res.data.posts);
-      setPosts(res.data.posts);
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to load posts");
+      console.log(res.data.downvotedPosts);
+      setPosts(res.data.downvotedPosts);
+    } catch (error) {
+      toast.error("Failed to load downvoted posts");
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleShare = async (postId) => {
+   const handleShare = async (postId) => {
     const shareUrl = `${window.location.origin}/post/${postId}`;
     const shareData = {
       title: "Check out this CityFix post!",
@@ -90,7 +92,7 @@ const hasDownvoted = (post) => post.downvotes?.includes(id);
         { headers: { Authorization: `Bearer ${token}` } }
       );
       toast.success(res.data.message);
-      fetchAllPosts(); // refresh updated vote count
+      fetchDownvotedPosts(); // refresh updated vote count
     } catch (err) {
       console.error(err);
       toast.error("Failed to submit vote");
@@ -115,7 +117,7 @@ const hasDownvoted = (post) => post.downvotes?.includes(id);
       );
       toast.success(res.data.message);
       setCommentInputs({ ...commentInputs, [postId]: "" });
-      fetchAllPosts();
+      fetchDownvotedPosts();
     } catch (err) {
       console.error(err);
       toast.error("Failed to add comment");
@@ -138,7 +140,7 @@ const hasDownvoted = (post) => post.downvotes?.includes(id);
       );
       toast.success(res.data.message);
       setReplyInputs({ ...replyInputs, [key]: "" });
-      fetchAllPosts();
+      fetchDownvotedPosts();
     } catch (err) {
       console.error(err);
       toast.error("Failed to add reply");
@@ -156,7 +158,7 @@ const hasDownvoted = (post) => post.downvotes?.includes(id);
         }
       );
       toast.success(res.data.message);
-      fetchAllPosts();
+      fetchDownvotedPosts();
     } catch (err) {
       console.error(err);
       toast.error("Failed to delete comment");
@@ -174,7 +176,7 @@ const hasDownvoted = (post) => post.downvotes?.includes(id);
         }
       );
       toast.success(res.data.message);
-      fetchAllPosts();
+      fetchDownvotedPosts();
     } catch (err) {
       console.error(err);
       toast.error("Failed to delete reply");
@@ -182,25 +184,25 @@ const hasDownvoted = (post) => post.downvotes?.includes(id);
   };
 
   useEffect(() => {
-    fetchAllPosts();
+    fetchDownvotedPosts();
   }, []);
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-gray-800">
-      <Toaster />
-      <h1 className="text-3xl sm:text-4xl font-bold text-center mb-8 text-blue-600">
-        Community Posts
-      </h1>
+      <h2 className="text-3xl sm:text-4xl font-bold text-center mb-8 text-blue-600">
+        👎 Downvoted Issues
+      </h2>
 
-      {posts.length === 0 ? (
-        <p className="text-center text-gray-500 text-base sm:text-lg">
-          No posts available.
-        </p>
+      {loading ? (
+        <div className="flex justify-center items-center mt-10">
+          <Loader2 className="animate-spin h-8 w-8 text-blue-500" />
+        </div>
+      ) : posts.length === 0 ? (
+        <p className="text-center text-gray-500 text-base sm:text-lg">You haven't downvoted any posts yet.</p>
       ) : (
-        posts
-          .filter((post) => post.user?._id !== id)
-          .map((post) => (
-            <div
+        <>
+          {posts.map((post) => (
+              <div
               key={post._id}
               className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 mb-8 w-full"
             >
@@ -274,7 +276,7 @@ const hasDownvoted = (post) => post.downvotes?.includes(id);
                   )}
               </div>
 
-              <div className="flex flex-wrap items-center gap-6 mt-4 text-sm">
+               <div className="flex flex-wrap items-center gap-6 mt-4 text-sm">
                <button
   onClick={() => vote(post._id, "upvote")}
   className={`flex items-center gap-2 font-medium px-3 py-2 rounded-full transition-all duration-200 transform hover:scale-105 ${
@@ -404,10 +406,12 @@ const hasDownvoted = (post) => post.downvotes?.includes(id);
                 )}
               </div>
             </div>
-          ))
+
+          ))}
+</>
       )}
     </div>
   );
 };
 
-export default OtherPosts;
+export default DownvotedIssue;

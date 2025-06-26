@@ -204,3 +204,41 @@ exports.getMessages = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+exports.getUpvotedPosts = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const upvotedPosts = await Post
+      .find({ upvotes: userId })
+      .populate("user", "name email role profilePhoto")
+      .sort({ createdAt: -1 });
+      
+    return res.status(200).json({
+      success: true,
+      upvotedPosts,
+    });
+  } catch (error) {
+    console.error("Error fetching upvoted posts:", error);
+    return res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
+exports.getDownvotedPosts = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const downvotedPosts = await Post.find({ downvotes: userId })
+      .populate("user", "name email role profilePhoto") // This is the fix
+      .sort({ createdAt: -1 });
+
+    console.log("Downvoted posts:", downvotedPosts);
+
+    return res.status(200).json({
+      success: true,
+      downvotedPosts,
+    });
+  } catch (error) {
+    console.error("Error fetching downvoted posts:", error);
+    return res.status(500).json({ success: false, message: "Server Error" });
+  }
+};

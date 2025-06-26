@@ -5,9 +5,8 @@ import { useAuth } from "../../../Context/AuthContext";
 import LiveRouteToIssue from "../../../Map/LiveRoutetoIssue";
 import { ThumbsDown, ThumbsUp } from "lucide-react";
 
-const ViewPosts = () => {
+const ResolvedIssue = () => {
   const [posts, setPosts] = useState([]);
-  const [filteredPosts, setFilteredPosts] = useState([]);
   const [finalCaption, setFinalCaption] = useState("");
   const [finalImages, setFinalImages] = useState([]);
   const [uploadingPostId, setUploadingPostId] = useState(null);
@@ -15,22 +14,13 @@ const ViewPosts = () => {
   const [replyInputs, setReplyInputs] = useState({});
   const [visibleComments, setVisibleComments] = useState({});
   const hasUpvoted = (post) => post.upvotes?.includes(id);
-const hasDownvoted = (post) => post.downvotes?.includes(id);
-
-
-  // Filter states
-  const [priorityFilter, setPriorityFilter] = useState("");
-  const [sortBy, setSortBy] = useState("");
+  const hasDownvoted = (post) => post.downvotes?.includes(id);
 
   const { id } = useAuth();
 
   useEffect(() => {
     fetchPosts();
   }, []);
-
-  useEffect(() => {
-    applyFilters();
-  }, [posts, priorityFilter, sortBy]);
 
   const fetchPosts = async () => {
     try {
@@ -46,49 +36,6 @@ const hasDownvoted = (post) => post.downvotes?.includes(id);
       console.error(err);
       toast.error("Failed to fetch posts");
     }
-  };
-
-  const applyFilters = () => {
-    let filtered = posts.filter((post) => post.assignedGovernment === null);
-
-    // Filter by priority
-    if (priorityFilter !== "") {
-      filtered = filtered.filter((post) => post.priority === priorityFilter);
-    }
-
-    // Sort by upvotes/downvotes
-    if (sortBy === "upvotes-high") {
-      filtered = filtered.sort(
-        (a, b) => (b.upvotes?.length || 0) - (a.upvotes?.length || 0)
-      );
-    } else if (sortBy === "upvotes-low") {
-      filtered = filtered.sort(
-        (a, b) => (a.upvotes?.length || 0) - (b.upvotes?.length || 0)
-      );
-    } else if (sortBy === "downvotes-high") {
-      filtered = filtered.sort(
-        (a, b) => (b.downvotes?.length || 0) - (a.downvotes?.length || 0)
-      );
-    } else if (sortBy === "downvotes-low") {
-      filtered = filtered.sort(
-        (a, b) => (a.downvotes?.length || 0) - (b.downvotes?.length || 0)
-      );
-    } else if (sortBy === "newest") {
-      filtered = filtered.sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-      );
-    } else if (sortBy === "oldest") {
-      filtered = filtered.sort(
-        (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
-      );
-    }
-
-    setFilteredPosts(filtered);
-  };
-
-  const clearFilters = () => {
-    setPriorityFilter("");
-    setSortBy("");
   };
 
   const toggleComments = (postId) => {
@@ -289,101 +236,25 @@ const hasDownvoted = (post) => post.downvotes?.includes(id);
     }
   };
 
+  // Only show resolved posts for the logged-in government
+  const resolvedPosts = posts.filter(
+    (post) =>
+      post.assignedGovernment === id && post.progressState === "Finished"
+  );
+
   return (
     <div className="max-w-6xl mx-auto p-6">
       <Toaster />
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">All Civic Posts</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">
+        All Resolved Civic Posts
+      </h1>
 
-      {/* Filter Section */}
-      <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-5 mb-6">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">
-          Filter & Sort Posts
-        </h2>
+  
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-          {/* Priority Filter */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Filter by Priority
-            </label>
-            <select
-              value={priorityFilter}
-              onChange={(e) => setPriorityFilter(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">All Priorities</option>
-              <option value="Low">Low Priority</option>
-              <option value="Medium">Medium Priority</option>
-              <option value="High">High Priority</option>
-              <option value="Critical">Critical Priority</option>
-            </select>
-          </div>
-
-          {/* Sort Filter */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Sort by
-            </label>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Default Order</option>
-              <option value="upvotes-high">Most Upvoted</option>
-              <option value="upvotes-low">Least Upvoted</option>
-              <option value="downvotes-high">Most Downvoted</option>
-              <option value="downvotes-low">Least Downvoted</option>
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-            </select>
-          </div>
-
-          {/* Clear Filters Button */}
-          <div>
-            <button
-              onClick={clearFilters}
-              className="w-full bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md font-medium transition-colors"
-            >
-              Clear Filters
-            </button>
-          </div>
-        </div>
-
-        {/* Active Filters Display */}
-        {(priorityFilter || sortBy) && (
-          <div className="mt-4 flex flex-wrap gap-2">
-            <span className="text-sm text-gray-600">Active filters:</span>
-            {priorityFilter && (
-              <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
-                Priority: {priorityFilter}
-              </span>
-            )}
-            {sortBy && (
-              <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">
-                Sort:{" "}
-                {sortBy
-                  .replace("-", " ")
-                  .replace(/\b\w/g, (l) => l.toUpperCase())}
-              </span>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Results Count */}
-      <div className="mb-4">
-        <p className="text-gray-600">
-          Showing {filteredPosts.length} of{" "}
-          {posts.filter((post) => post.assignedGovernment === null).length}{" "}
-          posts
-        </p>
-      </div>
-
-      {filteredPosts.length === 0 ? (
-        <p className="text-gray-500">No posts found matching your filters.</p>
+      {resolvedPosts.length === 0 ? (
+        <p className="text-gray-500">No resolved posts found.</p>
       ) : (
-        filteredPosts.map((post) => (
+        resolvedPosts.map((post) => (
           <div
             key={post._id}
             className="bg-white border border-gray-200 shadow-sm rounded-xl p-5 mb-8"
@@ -452,38 +323,37 @@ const hasDownvoted = (post) => post.downvotes?.includes(id);
               </p>
             </div>
 
-           <div className="flex flex-wrap items-center gap-6 mt-4 text-sm">
-               <button
-  onClick={() => vote(post._id, "upvote")}
-  className={`flex items-center gap-2 font-medium px-3 py-2 rounded-full transition-all duration-200 transform hover:scale-105 ${
-    hasUpvoted(post)
-      ? "bg-green-500 text-white shadow-lg"
-      : "bg-gray-100 text-green-500 hover:bg-green-50 border border-greem-200"
-  }`}
->
-  <ThumbsUp 
-    size={16} 
-    className={hasUpvoted(post) ? "fill-current" : ""} 
-  />
-  Upvote ({post.upvotes?.length || 0})
-</button>
+            <div className="flex flex-wrap items-center gap-6 mt-4 text-sm mb-4">
+              <button
+                onClick={() => vote(post._id, "upvote")}
+                className={`flex items-center gap-2 font-medium px-3 py-2 rounded-full transition-all duration-200 transform hover:scale-105 ${
+                  hasUpvoted(post)
+                    ? "bg-green-500 text-white shadow-lg"
+                    : "bg-gray-100 text-green-500 hover:bg-green-50 border border-greem-200"
+                }`}
+              >
+                <ThumbsUp
+                  size={16}
+                  className={hasUpvoted(post) ? "fill-current" : ""}
+                />
+                Upvote ({post.upvotes?.length || 0})
+              </button>
 
-               <button
-  onClick={() => vote(post._id, "downvote")}
-  className={`flex items-center gap-2 font-medium px-3 py-2 rounded-full transition-all duration-200 transform hover:scale-105 ${
-    hasDownvoted(post)
-      ? "bg-red-600 text-white shadow-lg"
-      : "bg-gray-100 text-red-600 hover:bg-red-50 border border-red-300"
-  }`}
->
-  <ThumbsDown 
-    size={16} 
-    className={hasDownvoted(post) ? "fill-current" : ""} 
-  />
-  Downvote ({post.downvotes?.length || 0})
-</button>
-
-              </div>
+              <button
+                onClick={() => vote(post._id, "downvote")}
+                className={`flex items-center gap-2 font-medium px-3 py-2 rounded-full transition-all duration-200 transform hover:scale-105 ${
+                  hasDownvoted(post)
+                    ? "bg-red-600 text-white shadow-lg"
+                    : "bg-gray-100 text-red-600 hover:bg-red-50 border border-red-300"
+                }`}
+              >
+                <ThumbsDown
+                  size={16}
+                  className={hasDownvoted(post) ? "fill-current" : ""}
+                />
+                Downvote ({post.downvotes?.length || 0})
+              </button>
+            </div>
             {post.location?.coordinates && (
               <LiveRouteToIssue
                 issueLat={post.location.coordinates.lat}
@@ -647,4 +517,4 @@ const hasDownvoted = (post) => post.downvotes?.includes(id);
   );
 };
 
-export default ViewPosts;
+export default ResolvedIssue;

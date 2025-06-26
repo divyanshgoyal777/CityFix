@@ -4,6 +4,7 @@ import { toast, Toaster } from "react-hot-toast";
 import { Pencil, Trash2, X, Filter } from "lucide-react";
 import { useAuth } from "../../../Context/AuthContext";
 import LocationMap from "../../../Map/LocationMap";
+import { ThumbsDown, ThumbsUp } from "lucide-react";
 
 const UserPosts = () => {
   const [posts, setPosts] = useState([]);
@@ -12,6 +13,8 @@ const UserPosts = () => {
   const [commentInputs, setCommentInputs] = useState({});
   const [replyInputs, setReplyInputs] = useState({});
   const [openComments, setOpenComments] = useState({});
+  const hasUpvoted = (post) => post.upvotes?.includes(id);
+const hasDownvoted = (post) => post.downvotes?.includes(id);
 
   // Filter states
   const [showFilters, setShowFilters] = useState(false);
@@ -328,6 +331,7 @@ const UserPosts = () => {
   return (
     <>
       <Toaster />
+      {!editPost &&
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-3xl font-bold text-gray-800">Your Posts</h2>
@@ -546,19 +550,37 @@ const UserPosts = () => {
                   </div>
                 )}
 
-              <div className="flex items-center gap-6 mt-4">
-                <button
-                  onClick={() => vote(post._id, "upvote")}
-                  className="flex items-center gap-1 text-green-600 hover:text-green-800"
-                >
-                  👍 Upvote ({post.upvotes?.length || 0})
-                </button>
-                <button
-                  onClick={() => vote(post._id, "downvote")}
-                  className="flex items-center gap-1 text-red-600 hover:text-red-800"
-                >
-                  👎 Downvote ({post.downvotes?.length || 0})
-                </button>
+             <div className="flex flex-wrap items-center gap-6 mt-4 text-sm">
+               <button
+  onClick={() => vote(post._id, "upvote")}
+  className={`flex items-center gap-2 font-medium px-3 py-2 rounded-full transition-all duration-200 transform hover:scale-105 ${
+    hasUpvoted(post)
+      ? "bg-green-500 text-white shadow-lg"
+      : "bg-gray-100 text-green-500 hover:bg-green-50 border border-greem-200"
+  }`}
+>
+  <ThumbsUp 
+    size={16} 
+    className={hasUpvoted(post) ? "fill-current" : ""} 
+  />
+  Upvote ({post.upvotes?.length || 0})
+</button>
+
+               <button
+  onClick={() => vote(post._id, "downvote")}
+  className={`flex items-center gap-2 font-medium px-3 py-2 rounded-full transition-all duration-200 transform hover:scale-105 ${
+    hasDownvoted(post)
+      ? "bg-red-600 text-white shadow-lg"
+      : "bg-gray-100 text-red-600 hover:bg-red-50 border border-red-300"
+  }`}
+>
+  <ThumbsDown 
+    size={16} 
+    className={hasDownvoted(post) ? "fill-current" : ""} 
+  />
+  Downvote ({post.downvotes?.length || 0})
+</button>
+
               </div>
 
               {post.finalUpdate && (
@@ -698,70 +720,170 @@ const UserPosts = () => {
             </div>
           ))
         )}
-      </div>
+      </div>}
 
       {/* Edit Modal */}
+    {/* Edit Modal */}
+      {/* Edit Modal */}
       {editPost && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex justify-center items-center px-4">
-          <form
-            onSubmit={handleEditSubmit}
-            className="bg-white max-w-lg w-full rounded-xl p-6 shadow-lg relative"
-          >
-            <button
-              type="button"
-              onClick={() => setEditPost(null)}
-              className="absolute top-3 right-3 text-red-500"
-            >
-              <X size={22} />
-            </button>
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">
-              Edit Post
-            </h3>
+    <div className="w-full  inset-0  bg-opacity-50 z-50 flex justify-center items-start px-4 py-8 overflow-y-auto ">
+          <div className="bg-white max-w-2xl mx-auto w-full rounded-xl shadow-2xl relative my-auto">
+            {/* Modal Header */}
+            <div className="bg-white border-b border-gray-200 px-6 py-5 rounded-t-xl">
+              <div className="flex justify-between items-center">
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900">Edit Post</h3>
+                  <p className="text-sm text-gray-500 mt-1">Update your post information</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setEditPost(null)}
+                  className="p-2 hover:bg-red-50 rounded-full transition-colors text-gray-400 hover:text-red-500 border border-gray-200 hover:border-red-200"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
 
-            <textarea
-              name="caption"
-              value={editPost.caption}
-              onChange={handleEditChange}
-              className="w-full border border-gray-300 rounded p-2 mb-3 resize-none"
-              rows={3}
-              placeholder="Update caption"
-            />
+            {/* Modal Body */}
+            <div className="p-6 max-h-[70vh] overflow-y-auto">
+              <form onSubmit={handleEditSubmit} className="space-y-6">
+                {/* Caption Section */}
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <label className="block text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                    Post Caption
+                  </label>
+                  <textarea
+                    name="caption"
+                    value={editPost.caption}
+                    onChange={handleEditChange}
+                    className="w-full border-2 border-gray-200 rounded-lg p-4 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none bg-white"
+                    rows={4}
+                    placeholder="Enter post caption..."
+                  />
+                </div>
 
-            {["state", "landmark", "address", "pincode"].map((field) => (
-              <input
-                key={field}
-                name={`location.${field}`}
-                value={editPost.location?.[field] || ""}
-                onChange={(e) =>
-                  setEditPost((prev) => ({
-                    ...prev,
-                    location: { ...prev.location, [field]: e.target.value },
-                  }))
-                }
-                placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-                className="w-full border border-gray-300 rounded p-2 mb-3"
-              />
-            ))}
+                {/* Location Section */}
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                    Location Information
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        State
+                      </label>
+                      <input
+                        name="location.state"
+                        value={editPost.location?.state || ""}
+                        onChange={(e) =>
+                          setEditPost((prev) => ({
+                            ...prev,
+                            location: { ...prev.location, state: e.target.value },
+                          }))
+                        }
+                        placeholder="Enter state"
+                        className="w-full border-2 border-gray-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
+                      />
+                    </div>
 
-            <select
-              name="priority"
-              value={editPost.priority}
-              onChange={handleEditChange}
-              className="w-full border border-gray-300 rounded p-2 mb-4"
-            >
-              <option value="Low">Low</option>
-              <option value="Medium">Medium</option>
-              <option value="High">High</option>
-              <option value="Critical">Critical</option>
-            </select>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Landmark
+                      </label>
+                      <input
+                        name="location.landmark"
+                        value={editPost.location?.landmark || ""}
+                        onChange={(e) =>
+                          setEditPost((prev) => ({
+                            ...prev,
+                            location: { ...prev.location, landmark: e.target.value },
+                          }))
+                        }
+                        placeholder="Enter landmark"
+                        className="w-full border-2 border-gray-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
+                      />
+                    </div>
 
-            <button
-              type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded"
-            >
-              Save Changes
-            </button>
-          </form>
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Address
+                      </label>
+                      <input
+                        name="location.address"
+                        value={editPost.location?.address || ""}
+                        onChange={(e) =>
+                          setEditPost((prev) => ({
+                            ...prev,
+                            location: { ...prev.location, address: e.target.value },
+                          }))
+                        }
+                        placeholder="Enter full address"
+                        className="w-full border-2 border-gray-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Pincode
+                      </label>
+                      <input
+                        name="location.pincode"
+                        value={editPost.location?.pincode || ""}
+                        onChange={(e) =>
+                          setEditPost((prev) => ({
+                            ...prev,
+                            location: { ...prev.location, pincode: e.target.value },
+                          }))
+                        }
+                        placeholder="Enter pincode"
+                        className="w-full border-2 border-gray-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Priority Level
+                      </label>
+                      <select
+                        name="priority"
+                        value={editPost.priority}
+                        onChange={handleEditChange}
+                        className="w-full border-2 border-gray-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all bg-white"
+                      >
+                        <option value="Low">🟢 Low Priority</option>
+                        <option value="Medium">🟡 Medium Priority</option>
+                        <option value="High">🟠 High Priority</option>
+                        <option value="Critical">🔴 Critical Priority</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="bg-gray-50 px-6 py-4 rounded-b-xl border-t border-gray-200">
+              <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setEditPost(null)}
+                  className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 hover:border-gray-400 transition-all font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  onClick={handleEditSubmit}
+                  className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </>

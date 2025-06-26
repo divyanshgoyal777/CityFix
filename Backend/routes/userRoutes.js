@@ -11,6 +11,8 @@ const {
   verifyPostCompletion,
   sendMessage,
   getMessages,
+  getUpvotedPosts,
+  getDownvotedPosts
 } = require("../controllers/userController");
 const {
   createPost,
@@ -62,5 +64,8 @@ router.delete(
 
 router.post("/sendMessage", authenticateToken, sendMessage);
 router.get("/getMessage", authenticateToken, getMessages);
+
+router.get("/upvotedPosts", authenticateToken, getUpvotedPosts);
+router.get("/downvotedPosts", authenticateToken, getDownvotedPosts);
 
 module.exports = router;

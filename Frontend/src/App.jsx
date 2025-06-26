@@ -23,7 +23,7 @@ import ManageUsers from "./components/dashboard/adminDashboard/ManageUsers/Manag
 import Posts from "./components/Posts/Posts";
 import ViewPosts from "./components/dashboard/governmentDashboard/ViewPosts/ViewPosts";
 import ViewProgress from "./components/dashboard/governmentDashboard/ViewProgress/ViewProgress";
-import Feedback from "./components/dashboard/governmentDashboard/Feedback/Feedback";
+import Feedback from "./components/dashboard/governmentDashboard/ResolvedIssue/ResolvedIssue";
 import UserProfile from "./components/dashboard/userDashboard/UserProfile/UserProfile";
 import GovernmentProfile from "./components/dashboard/governmentDashboard/GovernmentProfile/GovernmentProfile";
 import Developers from "./components/Developers/Developers";
@@ -37,6 +37,8 @@ import CommunityChat from "./components/dashboard/userDashboard/CommunityChat/Co
 import SharePost from "./components/Posts/SharePost/SharePost";
 import ScrollToTop from "./components/ScrollToTop";
 import AIChat from "./components/AIChat/AIChat";
+import DownvotedIssue from "./components/dashboard/userDashboard/DownvotedIssue/DownvotedIssue";
+import UpvotedIssue from "./components/dashboard/userDashboard/UpvotedIssue/UpvotedIssue";
 
 // 🔐 Protected route for logged-in users
 const ProtectedRoute = ({ element, role }) => {
@@ -95,6 +97,8 @@ function App() {
             <Route path="createPost" element={<CreatePost />} />
             <Route path="posts" element={<Posts />} />
             <Route path="communityChat" element={<CommunityChat />} />
+            <Route path="upvotedIssues" element={<UpvotedIssue />} />
+            <Route path="downvotedIssues" element={<DownvotedIssue />} />
           </Route>
 
           {/* Government Dashboard Routes */}
@@ -110,7 +114,7 @@ function App() {
             <Route index element={<GovernmentDashboardWelcome />} />
             <Route path="viewPosts" element={<ViewPosts />} />
             <Route path="viewProgress" element={<ViewProgress />} />
-            <Route path="feedback" element={<Feedback />} />
+            <Route path="resolvedIssues" element={<Feedback />} />
             <Route path="governmentProfile" element={<GovernmentProfile />} />
           </Route>
 

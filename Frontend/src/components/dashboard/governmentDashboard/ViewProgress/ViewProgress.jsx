@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
 import { useAuth } from "../../../Context/AuthContext";
+import { ThumbsDown, ThumbsUp } from "lucide-react";
 
 const ViewProgress = () => {
   const [posts, setPosts] = useState([]);
@@ -12,6 +13,9 @@ const ViewProgress = () => {
   const [replyInputs, setReplyInputs] = useState({});
   const [visibleComments, setVisibleComments] = useState({});
   const { id } = useAuth();
+  const hasUpvoted = (post) => post.upvotes?.includes(id);
+const hasDownvoted = (post) => post.downvotes?.includes(id);
+
 
   useEffect(() => {
     fetchPosts();
@@ -297,19 +301,37 @@ const ViewProgress = () => {
                 </p>
               </div>
 
-              <div className="flex items-center gap-6 mt-4">
-                <button
-                  onClick={() => vote(post._id, "upvote")}
-                  className="flex items-center gap-1 text-green-600 hover:text-green-800"
-                >
-                  👍 Upvote ({post.upvotes?.length || 0})
-                </button>
-                <button
-                  onClick={() => vote(post._id, "downvote")}
-                  className="flex items-center gap-1 text-red-600 hover:text-red-800"
-                >
-                  👎 Downvote ({post.downvotes?.length || 0})
-                </button>
+             <div className="flex flex-wrap items-center gap-6 mt-4 text-sm">
+               <button
+  onClick={() => vote(post._id, "upvote")}
+  className={`flex items-center gap-2 font-medium px-3 py-2 rounded-full transition-all duration-200 transform hover:scale-105 ${
+    hasUpvoted(post)
+      ? "bg-green-500 text-white shadow-lg"
+      : "bg-gray-100 text-green-500 hover:bg-green-50 border border-greem-200"
+  }`}
+>
+  <ThumbsUp 
+    size={16} 
+    className={hasUpvoted(post) ? "fill-current" : ""} 
+  />
+  Upvote ({post.upvotes?.length || 0})
+</button>
+
+               <button
+  onClick={() => vote(post._id, "downvote")}
+  className={`flex items-center gap-2 font-medium px-3 py-2 rounded-full transition-all duration-200 transform hover:scale-105 ${
+    hasDownvoted(post)
+      ? "bg-red-600 text-white shadow-lg"
+      : "bg-gray-100 text-red-600 hover:bg-red-50 border border-red-300"
+  }`}
+>
+  <ThumbsDown 
+    size={16} 
+    className={hasDownvoted(post) ? "fill-current" : ""} 
+  />
+  Downvote ({post.downvotes?.length || 0})
+</button>
+
               </div>
 
               {post.progressState === "Work Near Completion" &&
@@ -371,11 +393,13 @@ const ViewProgress = () => {
                 onClick={() => regressProgress(post._id, post.progressState)}
                 disabled={
                   post.progressState === "Finished" ||
-                  post.progressState === "Unseen"
+                  post.progressState === "Unseen" ||
+                  post.progressState === "Problem Seen"
                 }
                 className={`mt-2 ml-3 px-4 py-2 rounded text-white font-medium ${
                   post.progressState === "Finished" ||
                   post.progressState === "Unseen" ||
+                  post.progressState === "Problem Seen" ||
                   post.progressState === "Waiting for User Verification"
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-red-600 hover:bg-red-700"

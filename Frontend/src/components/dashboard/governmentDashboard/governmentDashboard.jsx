@@ -9,6 +9,7 @@ import {
   Menu,
   X,
   Home,
+  CheckCircle,
   Settings,
 } from "lucide-react";
 import Header from "../../Layouts/Header/Header";
@@ -31,9 +32,9 @@ const GovernmentDashboard = () => {
       path: "/government/dashboard/viewProgress",
     },
     {
-      label: "Feedback",
-      icon: <MessageCircle size={18} />,
-      path: "/government/dashboard/feedback",
+      label: "Resolved Issues",
+      icon: <CheckCircle size={18} />,
+      path: "/government/dashboard/resolvedIssues",
     },
     {
       label: "Profile",
