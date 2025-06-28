@@ -39,9 +39,12 @@ const AIChat = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/ask", {
-        message: userText,
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_CITYFIX_BACKEND_URL}/api/ask`,
+        {
+          message: userText,
+        }
+      );
 
       const aiText = res.data.reply;
       const tempId = Date.now();
