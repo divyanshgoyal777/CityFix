@@ -12,7 +12,7 @@ import {
 } from "react-leaflet";
 import { getRoute } from "./utils";
 
-const ORS_API_KEY = "5b3ce3597851110001cf62487ea3c461a3024fe991b2af4eb647f235";
+const ORS_API_KEY = `${import.meta.env.VITE_ORS_API_KEY}`;
 
 function LocationSetter({ setUserLocation, issueLat, issueLng, setRoute }) {
   useMapEvents({

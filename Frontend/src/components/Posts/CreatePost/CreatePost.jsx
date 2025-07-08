@@ -109,7 +109,6 @@ const CreatePost = () => {
     for (let pair of formData.entries()) {
       console.log(pair[0] + ": ", pair[1]);
     }
-    images.forEach((img) => formData.append("images", img));
     
     try {
       setIsSubmitting(true);
