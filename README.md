@@ -20,19 +20,32 @@
 
 ## 🛠️ Tech Stack
 
-### Frontend
-- **React.js** + **Tailwind CSS**
+### 🚀 Frontend
+- **React.js**
+- **Tailwind CSS**
 
-### Backend
-- **Node.js**, **Express.js**
+### 🔧 Backend
+- **Node.js**
+- **Express.js**
 
-### Database
+### 🗄️ Database
 - **MongoDB Atlas**
 
-### Auth & Storage
-- **JWT** Authentication  
-- **ImageKit** for media uploads  
-- **Google Maps API** for location services
+### 🔐 Authentication & Storage
+- **JWT** – JSON Web Token-based authentication  
+- **ImageKit.io** – For media/image uploads
+
+### 🗺️ Maps & Location Services
+- **Leaflet** + **OpenStreetMap** – For rendering interactive maps  
+- **OpenRouteService API** – For real-time location tracking
+
+### 💬 Real-time Communication
+- **Socket.io** – For WebSocket communication  
+- **Cohere AI** – For ChatBox responses
+
+### 🌐 Deployment
+- **Frontend:** [Netlify](https://www.netlify.com/)  
+- **Backend:** [Render](https://render.com/)
 
 ---
 
