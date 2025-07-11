@@ -11,7 +11,6 @@
 - 📍 **Geo-tagged Issue Reporting** – Report problems with photos and live locations
 - 🗳️ **Community Voting** – Prioritize the most urgent issues
 - 🔄 **Real-Time Status Tracking** – Integrated with government/public APIs
-- 🔗 **Leader Tagging** – Automatically notifies local leaders (e.g., MLA, Councillor)
 - 📢 **Social Media Sharing** – Share issues publicly to generate attention
 - 👥 **Role-Based Dashboards** – Separate views for Citizens, Government, and Admin
 - 🗂️ **Image Upload** – Via ImageKit for optimized delivery
